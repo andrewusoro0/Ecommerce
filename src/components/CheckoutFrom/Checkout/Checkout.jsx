@@ -10,7 +10,8 @@ import useStyles from './styles'
 const steps = ['Shipping address', 'Payment details'];
 
 const Checkout = ({cart, order, onCaptureCheckout, error}) => {
-    const [activeStep, setActiveStep] = useState(0);
+    debugger
+    const [activeStep, setActiveStep] = useState(2);
     const [checkoutToken, setCheckoutToken] = useState(null)
     const [shippingData, setShippingData] = useState({});
     const [isFinished, setIsFinished] = useState(false)
