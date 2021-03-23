@@ -17,6 +17,36 @@ const Checkout = ({cart, order, onCaptureCheckout, error}) => {
     const [isFinished, setIsFinished] = useState(false)
     const classes = useStyles();
 
+    
+    const next = (data) => {
+        
+        setShippingData(data)
+        nextStep()
+    }
+    const timeout=() => {
+        setTimeout(() =>{
+            setIsFinished(true)
+        },3000)
+    }
+    
+    const nextStep = () => setActiveStep((perActiveStep) => perActiveStep + 1 );
+    const backStep = () => setActiveStep((perActiveStep) => perActiveStep - 1 );
+    
+    useEffect(() =>{
+        const generateToken =async() => {
+            try{
+                const token = await commerce.checkout.generateToken(cart.id, {type: "cart"})
+                
+                setCheckoutToken(token)
+                
+            } catch (error){
+                console.log(error)
+            }
+        }
+        generateToken()
+        
+    },[cart])
+
     let Confirmation = () => (order.customer ? (
         <>
          <div>
@@ -49,39 +79,9 @@ const Checkout = ({cart, order, onCaptureCheckout, error}) => {
        <Typography variant='h5'> Error: { error}</Typography>
        <br/>
        <Button component={Link} to='/' variant='outlined' type='button' >Back to Home</Button>
-
        </>
         )
     }
-
-    const next = (data) => {
-        
-        setShippingData(data)
-        nextStep()
-    }
-    const timeout=() => {
-        setTimeout(() =>{
-            setIsFinished(true)
-        },3000)
-    }
-
-    const nextStep = () => setActiveStep((perActiveStep) => perActiveStep + 1 );
-    const backStep = () => setActiveStep((perActiveStep) => perActiveStep - 1 );
-
-    useEffect(() =>{
-        const generateToken =async() => {
-           try{
-               const token = await commerce.checkout.generateToken(cart.id, {type: "cart"})
-
-               setCheckoutToken(token)
-                 
-           } catch (error){
-             console.log(error)
-           }
-        }
-        generateToken()
-
-    },[cart])
 
     const Form = () => activeStep === 0
      ? <AddressForm checkoutToken={checkoutToken} next={next}/>
